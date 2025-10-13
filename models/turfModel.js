@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const turfSchema = new mongoose.Schema({
   ownerDetails: {
-    ownerId: { type: String, required: true },
+    adminId: { type: String, required: true },
     name: { type: String, required: true },
     contactNumber: { type: String, required: true },
     email: { type: String, required: true }

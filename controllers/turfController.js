@@ -210,3 +210,41 @@ exports.deleteTurf = async (req, res) => {
     });
   }
 };
+
+exports.getBookingStats = async (req, res) => {
+  try {
+    const stats = await Turf.aggregate([
+      {
+        $lookup: {
+          from: 'bookings',
+          localField: '_id',
+          foreignField: 'turf',
+          as: 'bookings'
+        }
+      },
+      {
+        $unwind: {
+          path: '$bookings',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          totalBookings: { $sum: { $cond: [{ $ifNull: ['$bookings', false] }, 1, 0] } },
+          totalRevenue: { $sum: { $cond: [{ $ifNull: ['$bookings.price', false] }, '$bookings.price', 0] } }
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: stats
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};

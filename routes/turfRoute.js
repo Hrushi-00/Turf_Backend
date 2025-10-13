@@ -7,7 +7,8 @@ const {
   getTurf,
   updateTurf,
   deleteTurf,
-  updateTurfMetaInfo
+  updateTurfMetaInfo,
+  getBookingStats
 } = require('../controllers/turfController');
 
 // Public routes
@@ -21,5 +22,7 @@ router.delete('/:id', protect, isAdmin, deleteTurf);
 
 // Meta info routes (admin only)
 router.patch('/:id/meta', protect, canManageMetaInfo, updateTurfMetaInfo);
+
+router.get('/bookings/stats', protect, isAdmin, getBookingStats);
 
 module.exports = router;
