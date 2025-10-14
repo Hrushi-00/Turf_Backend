@@ -22,4 +22,15 @@ const canManageMetaInfo = (req, res, next) => {
   }
 };
 
-module.exports = { protect, isAdmin, canManageMetaInfo };
+const isSuperAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'SuperAdmin') {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      error: 'Access denied. SuperAdmin only.'
+    });
+  }
+};
+
+module.exports = { protect, isAdmin, canManageMetaInfo, isSuperAdmin };

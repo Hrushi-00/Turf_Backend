@@ -5,11 +5,16 @@ const bookingSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: false
     },
     turf: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Turf',
+      required: true
+    },
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Auth',
       required: true
     },
     date: {

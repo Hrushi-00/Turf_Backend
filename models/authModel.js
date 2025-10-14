@@ -18,8 +18,8 @@ const authSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['SuperAdmin', 'admin'],
-    default: 'admin'
+    enum: ['SuperAdmin', 'Admin'],
+    default: 'Admin'
   }
 });
 

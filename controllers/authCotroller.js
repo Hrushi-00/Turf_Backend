@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
       username,
       email,
       password, 
-      role: 'admin' 
+      role: 'Admin' 
     });
     await user.save();
 

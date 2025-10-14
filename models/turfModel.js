@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const turfSchema = new mongoose.Schema({
   ownerDetails: {
-    adminId: { type: String, required: true },
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth' },
     name: { type: String, required: true },
     contactNumber: { type: String, required: true },
     email: { type: String, required: true }
@@ -58,7 +58,8 @@ const turfSchema = new mongoose.Schema({
     viewsCount: { type: Number, default: 0 },
     popularityScore: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now }
-  }
+  },
+  status: { type: String, enum: ['pending', 'rejected', 'active'], default: 'pending' }
 });
 
 module.exports = mongoose.model('Turf', turfSchema);

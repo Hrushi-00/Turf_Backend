@@ -6,6 +6,14 @@ exports.addTurf = async (req, res) => {
   try {
     const turfData = { ...req.body };
     
+    // Set adminId from JWT token
+    if (req.user && req.user._id) {
+      if (!turfData.ownerDetails) {
+        turfData.ownerDetails = {};
+      }
+      turfData.ownerDetails.adminId = req.user._id;
+    }
+    
     // Handle image uploads
     if (req.files) {
       // Upload main image
@@ -50,21 +58,22 @@ exports.addTurf = async (req, res) => {
 };
 
 // Get all turfs
-exports.getAllTurfs = async (req, res) => {
-  try {
-    const turfs = await Turf.find();
-    res.status(200).json({
-      success: true,
-      count: turfs.length,
-      data: turfs
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-};
+// exports.getAllTurfs = async (req, res) => {
+//   try {
+//     // Only return approved and active turfs for public users
+//     const turfs = await Turf.find({ status: 'active', 'metaInfo.isApproved': true });
+//     res.status(200).json({
+//       success: true,
+//       count: turfs.length,
+//       data: turfs
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       error: error.message
+//     });
+//   }
+// };
 
 // Get single turf
 exports.getTurf = async (req, res) => {
@@ -248,3 +257,62 @@ exports.getBookingStats = async (req, res) => {
     });
   }
 };
+exports.approveTurf = async (req, res) => {
+  try {
+    const turf = await Turf.findByIdAndUpdate(
+      req.params.id,
+      { 
+        status: 'active',
+        'metaInfo.isApproved': true
+      },
+      { new: true }
+    );
+    if (!turf) {
+      return res.status(404).json({ success: false, error: 'Turf not found' });
+    }
+    res.status(200).json({
+      success: true,
+      data: turf,
+      message: 'Turf approved successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+// Get all approved turfs
+exports.getApprovedTurfs = async (req, res) => {
+  try {
+    const turfs = await Turf.find({ status: 'active', 'metaInfo.isApproved': true });
+    res.status(200).json({
+      success: true,
+      count: turfs.length,
+      data: turfs
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+// Reject turf
+exports.rejectTurf = async (req, res) => {
+  try {
+    const turf = await Turf.findByIdAndUpdate(
+      req.params.id,
+      { 
+        status: 'rejected',
+        'metaInfo.isApproved': false
+      },
+      { new: true }
+    );
+    if (!turf) {
+      return res.status(404).json({ success: false, error: 'Turf not found' });
+    }
+    res.status(200).json({
+      success: true,
+      data: turf,
+      message: 'Turf rejected successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
