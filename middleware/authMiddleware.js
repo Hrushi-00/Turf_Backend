@@ -12,12 +12,14 @@ const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Fetch full user details (excluding password)
-    req.user = await User.findById(decoded.id).select('-password');
-    if (!req.user) {
+    const admin = await User.findById(decoded.id).select('-password');
+    if (!admin) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    req.user = admin;
+    req.userId = admin._id;
+    req.userRole = admin.role;
     next();
   } catch (error) {
     console.error('JWT verification error:', error);

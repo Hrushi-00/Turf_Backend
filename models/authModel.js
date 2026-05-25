@@ -18,8 +18,8 @@ const authSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['SuperAdmin', 'Admin'],
-    default: 'Admin'
+    enum: ['Admin', 'BusinessUser', 'SuperAdmin'],
+    default: 'BusinessUser'
   }
 });
 
@@ -42,8 +42,8 @@ authSchema.methods.matchPassword = async function (enteredPassword) {
 
 // Method to create JWT token
 authSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: '365years',
+  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
+    expiresIn: '7d',
   });
 };
 

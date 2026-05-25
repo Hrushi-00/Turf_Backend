@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getProfile, updateProfile, changePassword } = require('../controllers/authCotroller');
+const {
+  signup,
+  login,
+  getProfile,
+  updateProfile,
+  changePassword
+} = require('../controllers/businessAuthController');
 const { protect } = require('../middleware/authMiddleware');
 
-// Routes
-router.post('/register', register);
+router.post('/signup', signup);
 router.post('/login', login);
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
