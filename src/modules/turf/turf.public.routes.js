@@ -1,0 +1,37 @@
+const express = require('express');
+const router = express.Router();
+const { query } = require('express-validator');
+const { validate } = require('../../middleware/validate');
+const turfController = require('./turf.controller');
+
+const validateTurfFilters = [
+  query('page')
+    .optional()
+    .isInt({ min: 1 }).withMessage('Page must be a positive integer'),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
+  query('city')
+    .optional()
+    .trim()
+    .isLength({ max: 50 }).withMessage('City name must not exceed 50 characters'),
+  query('sport')
+    .optional()
+    .trim()
+    .isLength({ max: 50 }).withMessage('Sport name must not exceed 50 characters'),
+  query('featured')
+    .optional()
+    .isBoolean().withMessage('Featured must be a boolean'),
+  query('trending')
+    .optional()
+    .isBoolean().withMessage('Trending must be a boolean')
+];
+
+router.get('/', validateTurfFilters, validate, turfController.getAllTurfs);
+router.get('/approved/list', turfController.getApprovedTurfs);
+router.get('/featured', turfController.getFeaturedTurfs);
+router.get('/trending', turfController.getTrendingTurfs);
+router.get('/:id/availability', turfController.getTurfAvailability);
+router.get('/:id', turfController.getTurf);
+
+module.exports = router;
